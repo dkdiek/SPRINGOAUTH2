@@ -1,5 +1,6 @@
 package com.cos.springoauth2.config;
 
+import com.cos.springoauth2.oauth2.CustomClientRegistrationRepo;
 import com.cos.springoauth2.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +14,11 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomClientRegistrationRepo customClientRegistrationRepo;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomClientRegistrationRepo customClientRegistrationRepo) {
         this.customOAuth2UserService = customOAuth2UserService;
+        this.customClientRegistrationRepo = customClientRegistrationRepo;
     }
 
     @Bean
@@ -30,6 +33,7 @@ public class SecurityConfig {
         http
                 .oauth2Login((oauth2)->oauth2
                         .loginPage("/login")//커스텀 로그인 페이지 등록
+                        .clientRegistrationRepository(customClientRegistrationRepo.clientRegistrationRepository())
                         .userInfoEndpoint((userInfoEndpointConfig) ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService)));
         http
